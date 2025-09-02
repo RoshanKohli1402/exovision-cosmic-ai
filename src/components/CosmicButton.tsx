@@ -8,6 +8,7 @@ interface CosmicButtonProps {
   size?: 'default' | 'sm' | 'lg';
   className?: string;
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 const CosmicButton = ({ 
@@ -15,7 +16,8 @@ const CosmicButton = ({
   variant = 'primary', 
   size = 'default', 
   className, 
-  onClick 
+  onClick,
+  disabled 
 }: CosmicButtonProps) => {
   const baseClasses = "font-body font-medium transition-all duration-300 border";
   
@@ -30,6 +32,7 @@ const CosmicButton = ({
       className={cn(baseClasses, variantClasses[variant], className)}
       size={size}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </Button>
