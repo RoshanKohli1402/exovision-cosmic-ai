@@ -1,0 +1,39 @@
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+interface CosmicButtonProps {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary' | 'outline';
+  size?: 'default' | 'sm' | 'lg';
+  className?: string;
+  onClick?: () => void;
+}
+
+const CosmicButton = ({ 
+  children, 
+  variant = 'primary', 
+  size = 'default', 
+  className, 
+  onClick 
+}: CosmicButtonProps) => {
+  const baseClasses = "font-body font-medium transition-all duration-300 border";
+  
+  const variantClasses = {
+    primary: "bg-primary text-primary-foreground hover:bg-primary/90 border-primary shadow-glow hover:shadow-cosmic animate-glow-pulse",
+    secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-secondary",
+    outline: "border-primary text-primary hover:bg-primary/10 hover:shadow-glow"
+  };
+
+  return (
+    <Button
+      className={cn(baseClasses, variantClasses[variant], className)}
+      size={size}
+      onClick={onClick}
+    >
+      {children}
+    </Button>
+  );
+};
+
+export default CosmicButton;
