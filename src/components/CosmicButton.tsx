@@ -22,9 +22,9 @@ const CosmicButton = ({
   const baseClasses = "font-body font-medium transition-all duration-300 border";
   
   const variantClasses = {
-    primary: "bg-primary text-primary-foreground hover:bg-primary/90 border-primary shadow-glow hover:shadow-cosmic animate-glow-pulse",
-    secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90 border-secondary",
-    outline: "border-primary text-primary hover:bg-primary/10 hover:shadow-glow"
+    primary: "bg-primary text-primary-foreground hover:bg-primary/90 border-primary shadow-glow hover:shadow-cosmic",
+    secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-secondary shadow-md hover:shadow-glow",
+    outline: "bg-card/30 backdrop-blur-sm border-2 border-primary/50 text-primary hover:bg-primary/20 hover:border-primary hover:shadow-glow"
   };
 
   return (
