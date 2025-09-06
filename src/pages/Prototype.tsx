@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { 
   Upload, 
   FileText, 
@@ -16,6 +16,7 @@ import LightCurveChart from '@/components/LightCurveChart';
 import { parseCSVData, generateSampleData, readFileContent, type LightCurveData } from '@/utils/fileProcessor';
 
 const Prototype = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState<any>(null);
@@ -47,6 +48,10 @@ const Prototype = () => {
     if (files && files.length > 0) {
       setUploadedFile(files[0]);
     }
+  }, []);
+
+  const triggerFileSelect = useCallback(() => {
+    fileInputRef.current?.click();
   }, []);
 
   const processFile = useCallback(async () => {
@@ -128,18 +133,20 @@ const Prototype = () => {
                   Drag and drop your light curve file here, or click to browse
                 </p>
                 <input
+                  ref={fileInputRef}
                   type="file"
                   accept=".csv,.txt,.fits,.dat"
                   onChange={handleFileSelect}
                   className="hidden"
-                  id="file-upload"
                 />
-                <label htmlFor="file-upload">
-                  <CosmicButton variant="outline" className="cursor-pointer">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Choose File
-                  </CosmicButton>
-                </label>
+                <CosmicButton 
+                  variant="outline" 
+                  className="cursor-pointer hover:scale-105 transition-transform"
+                  onClick={triggerFileSelect}
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Choose File
+                </CosmicButton>
                 <p className="font-body text-xs text-muted-foreground mt-4">
                   Supported formats: CSV, TXT, FITS, DAT (Max 50MB)
                 </p>
