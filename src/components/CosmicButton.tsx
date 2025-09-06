@@ -24,7 +24,7 @@ const CosmicButton = ({
   const variantClasses = {
     primary: "bg-primary text-primary-foreground hover:bg-primary/90 border-primary shadow-glow hover:shadow-cosmic",
     secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-secondary shadow-md hover:shadow-glow",
-    outline: "bg-card/30 backdrop-blur-sm border-2 border-primary/50 text-primary hover:bg-primary/20 hover:border-primary hover:shadow-glow"
+    outline: "bg-card/60 backdrop-blur-sm border-2 border-primary/70 text-primary hover:bg-primary/30 hover:border-primary hover:shadow-glow hover:text-primary-foreground"
   };
 
   return (

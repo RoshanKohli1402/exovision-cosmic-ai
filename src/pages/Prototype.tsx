@@ -7,16 +7,21 @@ import {
   Zap,
   AlertCircle,
   CheckCircle,
-  Loader2
+  Loader2,
+  X
 } from 'lucide-react';
 import CosmicCard from '@/components/CosmicCard';
 import CosmicButton from '@/components/CosmicButton';
+import LightCurveChart from '@/components/LightCurveChart';
+import { parseCSVData, generateSampleData, readFileContent, type LightCurveData } from '@/utils/fileProcessor';
 
 const Prototype = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState<any>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [chartData, setChartData] = useState<LightCurveData[]>([]);
+  const [showChart, setShowChart] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -44,21 +49,42 @@ const Prototype = () => {
     }
   }, []);
 
-  const processFile = useCallback(() => {
+  const processFile = useCallback(async () => {
     if (!uploadedFile) return;
     
     setIsProcessing(true);
-    // Simulate AI processing
-    setTimeout(() => {
-      setResults({
-        exoplanetDetected: Math.random() > 0.3,
-        confidence: Math.random() * 0.4 + 0.6,
-        transitDepth: (Math.random() * 0.02 + 0.005).toFixed(4),
-        period: (Math.random() * 20 + 1).toFixed(2),
-        processingTime: (Math.random() * 2 + 0.5).toFixed(1)
-      });
+    try {
+      let data: LightCurveData[] = [];
+      
+      if (uploadedFile.name.includes('sample')) {
+        // Generate sample data
+        data = generateSampleData(uploadedFile.name.includes('kepler') ? 'kepler' : 'tess');
+      } else {
+        // Read and parse real file
+        const content = await readFileContent(uploadedFile);
+        data = parseCSVData(content);
+      }
+      
+      setChartData(data);
+      
+      // Simulate AI processing
+      setTimeout(() => {
+        const transitCount = data.filter(d => d.transit).length;
+        const hasTransits = transitCount > 10; // Require multiple transits for detection
+        
+        setResults({
+          exoplanetDetected: hasTransits,
+          confidence: hasTransits ? Math.random() * 0.3 + 0.7 : Math.random() * 0.4 + 0.3,
+          transitDepth: hasTransits ? (data.filter(d => d.transit).reduce((acc, d) => acc + (1 - d.flux), 0) / transitCount * 100).toFixed(4) : (Math.random() * 0.02 + 0.005).toFixed(4),
+          period: hasTransits ? (data.length / transitCount * (Math.max(...data.map(d => d.time)) - Math.min(...data.map(d => d.time))) / data.length).toFixed(2) : (Math.random() * 20 + 1).toFixed(2),
+          processingTime: (Math.random() * 2 + 0.5).toFixed(1)
+        });
+        setIsProcessing(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error processing file:', error);
       setIsProcessing(false);
-    }, 3000);
+    }
   }, [uploadedFile]);
 
   return (
@@ -164,7 +190,7 @@ const Prototype = () => {
                     variant="outline" 
                     className="text-left justify-start hover:scale-105 transition-transform"
                     onClick={() => {
-                      const sampleFile = new File(['sample data'], 'kepler-sample.csv', { type: 'text/csv' });
+                      const sampleFile = new File(['kepler-sample-data'], 'kepler-sample.csv', { type: 'text/csv' });
                       setUploadedFile(sampleFile);
                     }}
                   >
@@ -175,7 +201,7 @@ const Prototype = () => {
                     variant="outline" 
                     className="text-left justify-start hover:scale-105 transition-transform"
                     onClick={() => {
-                      const sampleFile = new File(['sample data'], 'tess-sample.csv', { type: 'text/csv' });
+                      const sampleFile = new File(['tess-sample-data'], 'tess-sample.csv', { type: 'text/csv' });
                       setUploadedFile(sampleFile);
                     }}
                   >
@@ -263,11 +289,28 @@ const Prototype = () => {
 
                   {/* Action Buttons */}
                   <div className="flex space-x-4">
-                    <CosmicButton variant="outline" className="flex-1 hover:scale-105 transition-transform">
+                    <CosmicButton 
+                      variant="outline" 
+                      className="flex-1 hover:scale-105 transition-transform"
+                      onClick={() => {
+                        const dataStr = JSON.stringify(results, null, 2);
+                        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                        const url = URL.createObjectURL(dataBlob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = 'exoplanet-analysis-results.json';
+                        link.click();
+                      }}
+                    >
                       <Download className="w-4 h-4 mr-2" />
                       Export Results
                     </CosmicButton>
-                    <CosmicButton variant="primary" className="flex-1 hover:scale-105 transition-transform">
+                    <CosmicButton 
+                      variant="primary" 
+                      className="flex-1 hover:scale-105 transition-transform"
+                      onClick={() => setShowChart(true)}
+                      disabled={chartData.length === 0}
+                    >
                       <BarChart3 className="w-4 h-4 mr-2" />
                       View Chart
                     </CosmicButton>
@@ -325,6 +368,39 @@ const Prototype = () => {
           </CosmicCard>
         </div>
       </div>
+
+      {/* Chart Modal */}
+      {showChart && chartData.length > 0 && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-lg max-w-6xl w-full max-h-[90vh] overflow-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-heading text-2xl font-bold text-foreground">Light Curve Analysis</h2>
+                <CosmicButton 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowChart(false)}
+                >
+                  <X className="w-4 h-4" />
+                </CosmicButton>
+              </div>
+              <LightCurveChart 
+                data={chartData}
+                title={`${uploadedFile?.name} - Light Curve`}
+                onExport={() => {
+                  const csvContent = chartData.map(d => `${d.time},${d.flux}`).join('\n');
+                  const blob = new Blob([`time,flux\n${csvContent}`], { type: 'text/csv' });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = 'light-curve-data.csv';
+                  link.click();
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
