@@ -6,10 +6,13 @@ import {
   Zap,
   Orbit,
   Target,
-  ArrowRight,
-  Star,
-  Telescope,
-  Globe
+  FileCode, // Added for consistency
+  Layers, // Added for consistency
+  CheckCircle,
+  TrendingUp,
+  Clock,
+  Rocket,
+  BarChart3 // <-- THE FIX IS HERE
 } from 'lucide-react';
 import CosmicCard from '@/components/CosmicCard';
 
@@ -25,17 +28,16 @@ const Solution = () => {
           </h1>
           <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mb-8" />
           <p className="font-body text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            A revolutionary AI-powered pipeline that transforms raw telescope data into exoplanet discoveries, 
-            accelerating humanity's search for habitable worlds.
+            ExoVision's solution is a modular, high-performance pipeline that transforms raw telescope data into exoplanet discoveries, accessible through an intuitive web interface.
           </p>
         </div>
       </section>
 
-      {/* AI Pipeline */}
+      {/* Heuristic Model Pipeline */}
       <section className="py-20 px-4 relative bg-black/20">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-heading text-4xl font-bold text-center mb-16 text-foreground">
-            The AI Detection Pipeline
+            The Heuristic Detection Pipeline
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -46,34 +48,32 @@ const Solution = () => {
                   <span className="text-xs font-bold text-primary">1</span>
                 </div>
               </div>
-              <h3 className="font-heading text-xl font-bold mb-4 text-foreground">Data Preprocessing</h3>
+              <h3 className="font-heading text-xl font-bold mb-4 text-foreground">Data Ingestion & Cleaning</h3>
               <p className="font-body text-muted-foreground mb-4">
-                Clean and prepare raw light curves from telescope data, removing systematic noise and artifacts.
+                Raw light curves from Kepler and TESS are parsed, normalized, and cleaned of obvious instrumental noise and outliers.
               </p>
-              <ul className="font-body text-sm text-muted-foreground text-left space-y-1">
-                <li>• Detrending & normalization</li>
-                <li>• Outlier removal</li>
-                <li>• Gap interpolation</li>
-                <li>• Quality flagging</li>
+              <ul className="font-body text-sm text-muted-foreground text-left space-y-1 list-disc list-inside">
+                <li>Detrending</li>
+                <li>Normalization</li>
+                <li>Outlier removal</li>
               </ul>
             </CosmicCard>
             
             <CosmicCard className="p-8 text-center hover:scale-105 transition-transform duration-300">
               <div className="relative mb-6">
-                <Brain className="w-12 h-12 mx-auto text-secondary" />
+                <Orbit className="w-12 h-12 mx-auto text-secondary" />
                 <div className="absolute -top-2 -right-2 w-6 h-6 bg-secondary/20 rounded-full flex items-center justify-center">
                   <span className="text-xs font-bold text-secondary">2</span>
                 </div>
               </div>
-              <h3 className="font-heading text-xl font-bold mb-4 text-foreground">Feature Extraction</h3>
+              <h3 className="font-heading text-xl font-bold mb-4 text-foreground">Heuristic Analysis</h3>
               <p className="font-body text-muted-foreground mb-4">
-                Extract meaningful patterns and signatures from light curves using advanced signal processing.
+                Our custom algorithm scans the data for transit-like events based on a set of astronomical rules.
               </p>
-              <ul className="font-body text-sm text-muted-foreground text-left space-y-1">
-                <li>• Transit depth & duration</li>
-                <li>• Periodicity analysis</li>
-                <li>• Shape characteristics</li>
-                <li>• Statistical moments</li>
+              <ul className="font-body text-sm text-muted-foreground text-left space-y-1 list-disc list-inside">
+                <li>Transit dip detection</li>
+                <li>Duration filtering</li>
+                <li>Periodicity verification</li>
               </ul>
             </CosmicCard>
             
@@ -84,78 +84,22 @@ const Solution = () => {
                   <span className="text-xs font-bold text-accent">3</span>
                 </div>
               </div>
-              <h3 className="font-heading text-xl font-bold mb-4 text-foreground">ML Classification</h3>
+              <h3 className="font-heading text-xl font-bold mb-4 text-foreground">Scoring & Visualization</h3>
               <p className="font-body text-muted-foreground mb-4">
-                AI models identify exoplanet transit signatures with superhuman accuracy and speed.
+                A confidence score is calculated and results are visualized, including a "folded" light curve for clear signal analysis.
               </p>
-              <ul className="font-body text-sm text-muted-foreground text-left space-y-1">
-                <li>• Deep neural networks</li>
-                <li>• Ensemble methods</li>
-                <li>• Confidence scoring</li>
-                <li>• False positive filtering</li>
+              <ul className="font-body text-sm text-muted-foreground text-left space-y-1 list-disc list-inside">
+                <li>Confidence scoring</li>
+                <li>Metric calculation</li>
+                <li>Interactive charting</li>
               </ul>
             </CosmicCard>
           </div>
         </div>
       </section>
 
-      {/* Data Sources */}
-      <section className="py-20 px-4 relative">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="font-heading text-4xl font-bold text-center mb-16 text-foreground">
-            Star Maps & Cosmic Signals
-          </h2>
-          
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <CosmicCard className="p-8 hover:scale-105 transition-transform duration-300">
-              <h3 className="font-heading text-2xl font-bold mb-6 text-foreground">Data Sources</h3>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Star className="w-6 h-6 text-primary flex-shrink-0" />
-                  <span className="font-body text-muted-foreground">Kepler Space Telescope Archives</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Telescope className="w-6 h-6 text-secondary flex-shrink-0" />
-                  <span className="font-body text-muted-foreground">TESS Mission Light Curves</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Database className="w-6 h-6 text-accent flex-shrink-0" />
-                  <span className="font-body text-muted-foreground">MAST Archive Integration</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Globe className="w-6 h-6 text-primary flex-shrink-0" />
-                  <span className="font-body text-muted-foreground">Ground-based Survey Data</span>
-                </div>
-              </div>
-            </CosmicCard>
-            
-            <CosmicCard className="p-8 hover:scale-105 transition-transform duration-300">
-              <h3 className="font-heading text-2xl font-bold mb-6 text-foreground">Processing Pipeline</h3>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Zap className="w-6 h-6 text-primary flex-shrink-0" />
-                  <span className="font-body text-muted-foreground">Detrending & Normalization</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Orbit className="w-6 h-6 text-secondary flex-shrink-0" />
-                  <span className="font-body text-muted-foreground">Orbital Period Folding</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Target className="w-6 h-6 text-accent flex-shrink-0" />
-                  <span className="font-body text-muted-foreground">Signal Enhancement</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Brain className="w-6 h-6 text-primary flex-shrink-0" />
-                  <span className="font-body text-muted-foreground">AI-Powered Detection</span>
-                </div>
-              </div>
-            </CosmicCard>
-          </div>
-        </div>
-      </section>
-
       {/* Technology Stack */}
-      <section className="py-20 px-4 relative bg-black/20">
+      <section className="py-20 px-4 relative">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-heading text-4xl font-bold text-center mb-16 text-foreground">
             Engines of Discovery
@@ -164,58 +108,61 @@ const Solution = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <CosmicCard className="p-6 text-center hover:scale-105 transition-transform duration-300">
               <div className="w-12 h-12 mx-auto mb-4 bg-primary/20 rounded-lg flex items-center justify-center">
-                <span className="font-heading font-bold text-primary">Py</span>
+                <Layers className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-heading text-lg font-bold mb-2 text-foreground">Python</h3>
-              <p className="font-body text-sm text-muted-foreground">Core processing engine</p>
+              <h3 className="font-heading text-lg font-bold mb-2 text-foreground">React & Vite</h3>
+              <p className="font-body text-sm text-muted-foreground">Modern, high-performance web front-end.</p>
             </CosmicCard>
             
             <CosmicCard className="p-6 text-center hover:scale-105 transition-transform duration-300">
-              <div className="w-12 h-12 mx-auto mb-4 bg-secondary/20 rounded-lg flex items-center justify-center">
-                <Telescope className="w-6 h-6 text-secondary" />
+               <div className="w-12 h-12 mx-auto mb-4 bg-secondary/20 rounded-lg flex items-center justify-center">
+                <FileCode className="w-6 h-6 text-secondary" />
               </div>
-              <h3 className="font-heading text-lg font-bold mb-2 text-foreground">Lightkurve</h3>
-              <p className="font-body text-sm text-muted-foreground">Astronomical data analysis</p>
+              <h3 className="font-heading text-lg font-bold mb-2 text-foreground">TypeScript</h3>
+              <p className="font-body text-sm text-muted-foreground">For robust, scalable, and error-free code.</p>
             </CosmicCard>
             
             <CosmicCard className="p-6 text-center hover:scale-105 transition-transform duration-300">
-              <div className="w-12 h-12 mx-auto mb-4 bg-accent/20 rounded-lg flex items-center justify-center">
-                <Brain className="w-6 h-6 text-accent" />
+               <div className="w-12 h-12 mx-auto mb-4 bg-accent/20 rounded-lg flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-accent" />
               </div>
-              <h3 className="font-heading text-lg font-bold mb-2 text-foreground">TensorFlow</h3>
-              <p className="font-body text-sm text-muted-foreground">Machine learning models</p>
+              <h3 className="font-heading text-lg font-bold mb-2 text-foreground">Recharts</h3>
+              <p className="font-body text-sm text-muted-foreground">For interactive and clear data visualizations.</p>
             </CosmicCard>
             
             <CosmicCard className="p-6 text-center hover:scale-105 transition-transform duration-300">
-              <div className="w-12 h-12 mx-auto mb-4 bg-primary/20 rounded-lg flex items-center justify-center">
-                <Globe className="w-6 h-6 text-primary" />
+               <div className="w-12 h-12 mx-auto mb-4 bg-primary/20 rounded-lg flex items-center justify-center">
+                <Rocket className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-heading text-lg font-bold mb-2 text-foreground">Streamlit</h3>
-              <p className="font-body text-sm text-muted-foreground">Interactive prototype</p>
+              <h3 className="font-heading text-lg font-bold mb-2 text-foreground">Tailwind & Shadcn</h3>
+              <p className="font-body text-sm text-muted-foreground">For a beautiful, responsive, and thematic UI.</p>
             </CosmicCard>
           </div>
         </div>
       </section>
 
-      {/* Performance Metrics */}
-      <section className="py-20 px-4 relative">
+      {/* Performance & Impact */}
+      <section className="py-20 px-4 relative bg-black/20">
         <div className="max-w-4xl mx-auto">
           <CosmicCard className="p-12 text-center hover:scale-105 transition-transform duration-300">
             <h2 className="font-heading text-3xl font-bold mb-8 text-foreground">
-              Revolutionary Performance
+              Mission Impact & Scalability
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div>
-                <div className="font-heading text-4xl font-bold text-primary mb-2">10,000x</div>
-                <div className="font-body text-muted-foreground">Faster than manual analysis</div>
+                <Clock className="w-10 h-10 mx-auto mb-2 text-primary" />
+                <div className="font-heading text-3xl font-bold text-primary mb-2">Seconds</div>
+                <div className="font-body text-muted-foreground">Analysis time per light curve, down from hours of manual work.</div>
               </div>
               <div>
-                <div className="font-heading text-4xl font-bold text-secondary mb-2">95%</div>
-                <div className="font-body text-muted-foreground">Accuracy in detection</div>
+                <CheckCircle className="w-10 h-10 mx-auto mb-2 text-secondary" />
+                <div className="font-heading text-3xl font-bold text-secondary mb-2">95%+</div>
+                <div className="font-body text-muted-foreground">Target accuracy for our future deep learning models.</div>
               </div>
               <div>
-                <div className="font-heading text-4xl font-bold text-accent mb-2">24/7</div>
-                <div className="font-body text-muted-foreground">Continuous processing</div>
+                <TrendingUp className="w-10 h-10 mx-auto mb-2 text-accent" />
+                <div className="font-heading text-3xl font-bold text-accent mb-2">Infinite</div>
+                <div className="font-body text-muted-foreground">Scalability with our planned cloud backend architecture.</div>
               </div>
             </div>
           </CosmicCard>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  Mail, 
-  MapPin, 
-  Phone, 
+import {
+  Mail,
+  MapPin,
+  Phone,
   Send,
   Github,
   Twitter,
@@ -29,8 +29,9 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+    // A simple alert for the demo instead of a console log
+    alert(`Thank you for your message, ${formData.name}! We will be in touch shortly.`);
+    setFormData({ name: '', email: '', subject: '', message: '' });
   };
 
   return (
@@ -155,7 +156,7 @@ const Contact = () => {
                   <Mail className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
                   <div>
                     <p className="font-body font-medium text-foreground">Email</p>
-                    <p className="font-body text-muted-foreground">exovision@spaceapps.nasa.gov</p>
+                    <p className="font-body text-muted-foreground">vanshikapandey2706@gmail.com</p>
                     <p className="font-body text-sm text-muted-foreground">Response within 24 hours</p>
                   </div>
                 </div>
@@ -164,8 +165,8 @@ const Contact = () => {
                   <Phone className="w-6 h-6 text-secondary flex-shrink-0 mt-1" />
                   <div>
                     <p className="font-body font-medium text-foreground">Phone</p>
-                    <p className="font-body text-muted-foreground">+1 (555) 123-EXOV</p>
-                    <p className="font-body text-sm text-muted-foreground">Mon-Fri, 9AM-6PM EST</p>
+                    <p className="font-body text-muted-foreground">+91 9516891829</p>
+                    <p className="font-body text-sm text-muted-foreground">Mon-Fri, 9AM-6PM IST</p>
                   </div>
                 </div>
                 
@@ -173,8 +174,8 @@ const Contact = () => {
                   <MapPin className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
                   <div>
                     <p className="font-body font-medium text-foreground">Location</p>
-                    <p className="font-body text-muted-foreground">NASA Goddard Space Flight Center</p>
-                    <p className="font-body text-sm text-muted-foreground">Greenbelt, MD 20771</p>
+                    <p className="font-body text-muted-foreground">Gyan Ganga Institute of Technology and Sciences</p>
+                    <p className="font-body text-sm text-muted-foreground">Jabalpur, M.P.</p>
                   </div>
                 </div>
               </div>
@@ -188,7 +189,8 @@ const Contact = () => {
               
               <div className="space-y-4">
                 <a 
-                  href="#" 
+                  href="https://github.com/roshankohli1402/exovision-cosmic-ai" 
+                  target="_blank" rel="noopener noreferrer"
                   className="flex items-center space-x-4 p-3 hover:bg-black/20 rounded-lg transition-colors group"
                 >
                   <Github className="w-6 h-6 text-muted-foreground group-hover:text-primary" />
@@ -200,19 +202,8 @@ const Contact = () => {
                 </a>
                 
                 <a 
-                  href="#" 
-                  className="flex items-center space-x-4 p-3 hover:bg-black/20 rounded-lg transition-colors group"
-                >
-                  <Twitter className="w-6 h-6 text-muted-foreground group-hover:text-secondary" />
-                  <div>
-                    <p className="font-body font-medium text-foreground">Twitter</p>
-                    <p className="font-body text-sm text-muted-foreground">Latest discoveries & updates</p>
-                  </div>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground ml-auto" />
-                </a>
-                
-                <a 
-                  href="#" 
+                  href="https://www.linkedin.com/in/roshan-kohli-758336219/" 
+                  target="_blank" rel="noopener noreferrer"
                   className="flex items-center space-x-4 p-3 hover:bg-black/20 rounded-lg transition-colors group"
                 >
                   <Linkedin className="w-6 h-6 text-muted-foreground group-hover:text-accent" />
@@ -225,27 +216,27 @@ const Contact = () => {
               </div>
             </CosmicCard>
 
-            {/* Quick Links */}
+            {/* Quick Links - UPDATED */}
             <CosmicCard className="p-8">
               <h2 className="font-heading text-2xl font-bold mb-6 text-foreground">
-                Quick Links
+                Resources & Research
               </h2>
               
               <div className="space-y-3">
-                <a href="#" className="block font-body text-muted-foreground hover:text-primary transition-colors">
-                  → NASA Space Apps Challenge 2025
+                <a href="https://exoplanetarchive.ipac.caltech.edu/" target="_blank" rel="noopener noreferrer" className="block font-body text-muted-foreground hover:text-primary transition-colors">
+                  → NASA Exoplanet Archive (MAST)
                 </a>
-                <a href="#" className="block font-body text-muted-foreground hover:text-primary transition-colors">
-                  → Kepler & TESS Data Archives
+                <a href="https://arxiv.org/abs/2011.14135" target="_blank" rel="noopener noreferrer" className="block font-body text-muted-foreground hover:text-primary transition-colors">
+                  → Research: Exoplanet Detection using ML (arXiv)
                 </a>
-                <a href="#" className="block font-body text-muted-foreground hover:text-primary transition-colors">
-                  → Exoplanet Research Papers
+                <a href="https://www.jsr.org/hs/index.php/path/article/view/2821" target="_blank" rel="noopener noreferrer" className="block font-body text-muted-foreground hover:text-primary transition-colors">
+                  → Research: Feature Importance in Verification
                 </a>
-                <a href="#" className="block font-body text-muted-foreground hover:text-primary transition-colors">
-                  → Open Source Documentation
+                <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9132280/" target="_blank" rel="noopener noreferrer" className="block font-body text-muted-foreground hover:text-primary transition-colors">
+                  → Research: Combining Real & Synthetic Data
                 </a>
-                <a href="#" className="block font-body text-muted-foreground hover:text-primary transition-colors">
-                  → Partnership Opportunities
+                <a href="https://www.spaceappschallenge.org/2025/challenges/a-world-away-hunting-for-exoplanets-with-ai/" target="_blank" rel="noopener noreferrer" className="block font-body text-muted-foreground hover:text-primary transition-colors">
+                  → NASA Space Apps Challenge Brief
                 </a>
               </div>
             </CosmicCard>
