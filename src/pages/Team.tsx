@@ -1,8 +1,8 @@
 import React from 'react';
 import { 
   Users, 
-  Github, 
-  Linkedin, 
+  Github,
+  Linkedin,
   Mail,
   Star,
   Telescope,
@@ -15,40 +15,32 @@ const Team = () => {
   const teamMembers = [
     {
       id: 1,
-      name: "Dr. Sarah Chen",
+      name: "Vanshika Pandey",
       role: "Mission Commander",
       specialty: "Astrophysics & AI Research",
-      description: "Leading exoplanet research with 10+ years in space telescope data analysis and machine learning applications in astronomy.",
-      avatar: "SC",
+      description: "Exploring exoplanets through telescope data and AI-driven analysis.",
+      avatar: "VP",
       color: "primary"
     },
     {
       id: 2,
-      name: "Marcus Rodriguez",
+      name: "Roshan Kohli",
       role: "AI Systems Engineer",
       specialty: "Machine Learning & Data Science",
-      description: "Specialized in deep learning architectures for astronomical data processing and pattern recognition in noisy datasets.",
-      avatar: "MR",
+      description: "Building and training AI models to detect hidden patterns in space data.",
+      avatar: "RK",
       color: "secondary"
     },
     {
       id: 3,
-      name: "Dr. Elena Kowalski",
+      name: "Shruti Chadda",
       role: "Data Pipeline Architect",
       specialty: "Software Engineering & DevOps",
-      description: "Expert in large-scale data processing systems and cloud infrastructure for scientific computing applications.",
-      avatar: "EK",
+      description: "Designing efficient pipelines for space data processing and analysis.",
+      avatar: "SC",
       color: "accent"
     },
-    {
-      id: 4,
-      name: "James Thompson",
-      role: "Research Scientist",
-      specialty: "Computational Astrophysics",
-      description: "Focusing on statistical analysis of exoplanet populations and validation of machine learning detection algorithms.",
-      avatar: "JT",
-      color: "primary"
-    }
+
   ];
 
   const getColorClasses = (color: string) => {
