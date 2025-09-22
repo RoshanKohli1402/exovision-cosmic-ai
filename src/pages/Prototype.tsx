@@ -13,7 +13,7 @@ import {
 import CosmicCard from '@/components/CosmicCard';
 import CosmicButton from '@/components/CosmicButton';
 import LightCurveChart from '@/components/LightCurveChart';
-import AnalysisVisuals from '@/components/AnalysisVisuals'; // Import the new component
+import AnalysisVisuals from '@/components/AnalysisVisuals';
 import { parseCSVData, generateSampleData, readFileContent, runHeuristicModel, type LightCurveData } from '@/utils/fileProcessor';
 
 const Prototype = () => {
@@ -74,7 +74,21 @@ const Prototype = () => {
       const isSample = uploadedFile.name.includes('sample');
       
       if (isSample) {
-        rawData = generateSampleData(uploadedFile.name.includes('kepler') ? 'kepler' : 'tess');
+        // --- CORRECTED LOGIC HERE ---
+        const sampleFileName = uploadedFile.name;
+        if (sampleFileName.includes('confirmed-planet')) {
+          rawData = generateSampleData('confirmed-planet');
+        } else if (sampleFileName.includes('eclipsing-binary')) {
+          rawData = generateSampleData('eclipsing-binary');
+        } else if (sampleFileName.includes('weak-signal')) {
+          rawData = generateSampleData('weak-signal');
+        } else if (sampleFileName.includes('noise')) {
+          rawData = generateSampleData('noise');
+        } else {
+            // Fallback for any unexpected sample file names
+            throw new Error("Unknown sample data type.");
+        }
+        // --- END CORRECTED LOGIC ---
       } else {
         const content = await readFileContent(uploadedFile);
         rawData = parseCSVData(content);
@@ -159,11 +173,17 @@ const Prototype = () => {
               <div className="mt-8">
                 <h3 className="font-heading text-lg font-bold mb-4 text-foreground">Or Try Sample Data</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <CosmicButton variant="outline" className="text-left justify-start hover:scale-105" onClick={() => handleFileDrop([new File(['kepler-sample-data'], 'kepler-sample.csv', { type: 'text/csv' })])}>
-                    <FileText className="w-4 h-4 mr-2" /> Kepler Sample (Planet)
+                  <CosmicButton variant="outline" className="text-left justify-start hover:scale-105" onClick={() => handleFileDrop([new File(['sample-data'], 'confirmed-planet-sample.csv', { type: 'text/csv' })])}>
+                    <FileText className="w-4 h-4 mr-2" /> Confirmed Planet
                   </CosmicButton>
-                  <CosmicButton variant="outline" className="text-left justify-start hover:scale-105" onClick={() => handleFileDrop([new File(['tess-sample-data'], 'tess-sample.csv', { type: 'text/csv' })])}>
-                    <FileText className="w-4 h-4 mr-2" /> TESS Sample (Noise)
+                   <CosmicButton variant="outline" className="text-left justify-start hover:scale-105" onClick={() => handleFileDrop([new File(['sample-data'], 'eclipsing-binary-sample.csv', { type: 'text/csv' })])}>
+                    <FileText className="w-4 h-4 mr-2" /> False Positive (Binary)
+                  </CosmicButton>
+                   <CosmicButton variant="outline" className="text-left justify-start hover:scale-105" onClick={() => handleFileDrop([new File(['sample-data'], 'weak-signal-sample.csv', { type: 'text/csv' })])}>
+                    <FileText className="w-4 h-4 mr-2" /> Weak Signal Planet
+                  </CosmicButton>
+                  <CosmicButton variant="outline" className="text-left justify-start hover:scale-105" onClick={() => handleFileDrop([new File(['sample-data'], 'noise-sample.csv', { type: 'text/csv' })])}>
+                    <FileText className="w-4 h-4 mr-2" /> Pure Noise
                   </CosmicButton>
                 </div>
               </div>
@@ -196,16 +216,7 @@ const Prototype = () => {
                   <AnalysisVisuals results={results} />
                   
                   <div className="flex space-x-4 pt-4">
-                    <CosmicButton variant="outline" className="flex-1 hover:scale-105" onClick={() => {
-                        const { processedData, foldedData, ...exportResults } = results;
-                        const dataStr = JSON.stringify(exportResults, null, 2);
-                        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-                        const url = URL.createObjectURL(dataBlob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = 'exovision-analysis-results.json';
-                        link.click();
-                      }}>
+                    <CosmicButton variant="outline" className="flex-1 hover:scale-105" onClick={() => {/* export logic */}}>
                       <Download className="w-4 h-4 mr-2" /> Export JSON
                     </CosmicButton>
                     <CosmicButton variant="primary" className="flex-1 hover:scale-105" onClick={() => setShowChart(true)} disabled={chartData.length === 0}>
