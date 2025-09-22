@@ -20,7 +20,10 @@ const Team = () => {
       specialty: "Astrophysics & AI Research",
       description: "Exploring exoplanets through telescope data and AI-driven analysis.",
       avatar: "VP",
-      color: "primary"
+      color: "primary",
+      github: "https://github.com/vanshikaa2706", 
+      linkedin: "https://www.linkedin.com/in/vanshika-pandey-463776299/", 
+      email: "vanshikapandey2706@gmail.com"
     },
     {
       id: 2,
@@ -29,7 +32,10 @@ const Team = () => {
       specialty: "Machine Learning & Data Science",
       description: "Building and training AI models to detect hidden patterns in space data.",
       avatar: "RK",
-      color: "secondary"
+      color: "secondary",
+      github: "https://github.com/RoshanKohli1402", 
+      linkedin: "https://www.linkedin.com/in/roshan-kohli-a45100293/", 
+      email: "roshan.kohli.14.02@gmail.com"
     },
     {
       id: 3,
@@ -38,9 +44,11 @@ const Team = () => {
       specialty: "Software Engineering & DevOps",
       description: "Designing efficient pipelines for space data processing and analysis.",
       avatar: "SC",
-      color: "accent"
-    },
-
+      color: "accent",
+      github: "https://github.com/Shruti-chadda", 
+      linkedin: "https://www.linkedin.com/in/shruti-chadda-1b8057327/", 
+      email: "shrutiichadaa@gmail.com"
+    }
   ];
 
   const getColorClasses = (color: string) => {
@@ -67,7 +75,7 @@ const Team = () => {
           </h1>
           <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mb-8" />
           <p className="font-body text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Meet the brilliant minds behind ExoVision, combining decades of astrophysics expertise 
+            Meet the brilliant minds behind ExoVision, combining astrophysics expertise 
             with cutting-edge AI to accelerate exoplanet discovery.
           </p>
         </div>
@@ -104,15 +112,28 @@ const Team = () => {
                     
                     {/* Social Links */}
                     <div className="flex space-x-3">
-                      <button className="p-2 hover:bg-border/20 rounded-lg transition-colors">
+                      <a 
+                        href={member.github} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="p-2 hover:bg-border/20 rounded-lg transition-colors"
+                      >
                         <Github className="w-4 h-4 text-muted-foreground hover:text-foreground" />
-                      </button>
-                      <button className="p-2 hover:bg-border/20 rounded-lg transition-colors">
+                      </a>
+                      <a 
+                        href={member.linkedin} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="p-2 hover:bg-border/20 rounded-lg transition-colors"
+                      >
                         <Linkedin className="w-4 h-4 text-muted-foreground hover:text-foreground" />
-                      </button>
-                      <button className="p-2 hover:bg-border/20 rounded-lg transition-colors">
+                      </a>
+                      <a 
+                        href={`mailto:${member.email}`}
+                        className="p-2 hover:bg-border/20 rounded-lg transition-colors"
+                      >
                         <Mail className="w-4 h-4 text-muted-foreground hover:text-foreground" />
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -134,7 +155,7 @@ const Team = () => {
               <Telescope className="w-12 h-12 mx-auto mb-4 text-primary" />
               <h3 className="font-heading text-lg font-bold mb-2 text-foreground">Astrophysics</h3>
               <p className="font-body text-sm text-muted-foreground">
-                Deep understanding of stellar physics and exoplanet detection methods
+                Stellar physics and exoplanet detection methods
               </p>
             </CosmicCard>
             
@@ -142,7 +163,7 @@ const Team = () => {
               <Brain className="w-12 h-12 mx-auto mb-4 text-secondary" />
               <h3 className="font-heading text-lg font-bold mb-2 text-foreground">Machine Learning</h3>
               <p className="font-body text-sm text-muted-foreground">
-                Advanced AI algorithms for pattern recognition and classification
+                AI algorithms for pattern recognition and classification
               </p>
             </CosmicCard>
             
@@ -150,7 +171,7 @@ const Team = () => {
               <Code className="w-12 h-12 mx-auto mb-4 text-accent" />
               <h3 className="font-heading text-lg font-bold mb-2 text-foreground">Software Engineering</h3>
               <p className="font-body text-sm text-muted-foreground">
-                Scalable systems for processing massive astronomical datasets
+                Scalable systems for astronomical datasets
               </p>
             </CosmicCard>
             
@@ -158,7 +179,7 @@ const Team = () => {
               <Star className="w-12 h-12 mx-auto mb-4 text-primary" />
               <h3 className="font-heading text-lg font-bold mb-2 text-foreground">Research</h3>
               <p className="font-body text-sm text-muted-foreground">
-                Published research in exoplanet science and computational methods
+                Publications in exoplanet science and computational methods
               </p>
             </CosmicCard>
           </div>
@@ -174,9 +195,8 @@ const Team = () => {
             </h2>
             <p className="font-body text-lg text-muted-foreground leading-relaxed mb-8">
               We are dedicated to pushing the boundaries of exoplanet discovery through innovative 
-              AI solutions. Our team combines deep astrophysical knowledge with cutting-edge machine 
-              learning to unlock the secrets hidden in telescope data, accelerating humanity's search 
-              for worlds beyond our solar system.
+              AI solutions. Our team combines astrophysical knowledge with machine learning to unlock 
+              secrets hidden in telescope data, accelerating humanity's search for worlds beyond our solar system.
             </p>
             <div className="grid md:grid-cols-3 gap-8 text-center">
               <div>
