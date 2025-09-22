@@ -13,10 +13,7 @@
 
 ### [➡️ View the Live Demo Here](https://your-deployment-link.com)
 
-*(Replace `https://your-deployment-link.com` with your actual live URL)*
-
-![ExoVision Prototype Screenshot](https://i.imgur.com/gKk2g7I.png) 
-*(**Action:** Replace this with a real screenshot of your prototype's results page)*
+<img width="1177" height="961" alt="image" src="https://github.com/user-attachments/assets/849a91a6-4313-4048-b2db-9d0f41a08f40" />
 
 ## The Cosmic Challenge 🌌
 
@@ -46,8 +43,8 @@ Our prototype implements a custom-built **heuristic model** in TypeScript to per
 
 This model serves as a crucial performance benchmark and validates our end-to-end data processing pipeline. Our architecture is modular, allowing this heuristic model to be seamlessly swapped with a more advanced deep learning model in future development.
 
-![Architecture Diagram](https://i.imgur.com/gKk2g7I.png) 
-*(**Action:** You can keep this diagram as is, it's perfect)*
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/6bfa363f-3a60-4aa6-b42e-ca3f93f52fb5" />
+
 
 ## Technology Stack 🛠️
 
