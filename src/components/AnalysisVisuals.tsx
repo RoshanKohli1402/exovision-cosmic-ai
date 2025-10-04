@@ -18,6 +18,7 @@ interface AnalysisVisualsProps {
   };
 }
 
+
 const AnalysisVisuals: React.FC<AnalysisVisualsProps> = ({ results }) => {
   if (!results) {
     return <div className="text-center text-muted-foreground">No analysis results to display.</div>;

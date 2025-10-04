@@ -32,6 +32,7 @@ const FluxHistogram: React.FC<FluxHistogramProps> = ({ data }) => {
         bins[numBins - 1].count++;
     }
   });
+  
 
   const histogramData = bins.map(bin => ({
     flux: bin.range.toFixed(4),

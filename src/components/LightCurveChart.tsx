@@ -99,4 +99,5 @@ const LightCurveChart: React.FC<LightCurveChartProps> = ({
   );
 };
 
+
 export default LightCurveChart;
