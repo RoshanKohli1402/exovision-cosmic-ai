@@ -15,32 +15,73 @@ interface HeuristicResult {
   foldedData: LightCurveData[];
 }
 
+// --- NEW: Define the structure for the Random Forest API response ---
+export interface RandomForestPrediction {
+  classification: string;
+  confidence: number;
+  featureImportances?: { [key: string]: number };
+  predictedPeriod?: number;
+  rawProbabilities?: { [key: string]: number };
+  message?: string;
+}
+
+// --- THIS IS THE CRITICAL NEW FUNCTION ---
+const API_URL = 'http://10.57.171.32:5000/predict'; // The IP address you provided
+
+export const runRandomForestModel = async (data: LightCurveData[]): Promise<RandomForestPrediction> => {
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Send the raw time and flux data to the backend
+      body: JSON.stringify({
+        time: data.map(d => d.time),
+        flux: data.map(d => d.flux)
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `API request failed with status ${response.status}`);
+    }
+
+    const prediction: RandomForestPrediction = await response.json();
+    return prediction;
+
+  } catch (error) {
+    console.error('Error running Random Forest model via API:', error);
+    // Re-throw the error so the UI can catch it and display a message
+    if (error instanceof TypeError) { // This often indicates a network error
+        throw new Error("Network error: Could not connect to the AI backend. Is the server running and accessible?");
+    }
+    throw error;
+  }
+};
+
+
 /**
  * AI MODEL: Heuristic-Based Transit Detection (Enhanced)
- * This model not only detects exoplanets but also classifies other common astronomical signals.
  */
 export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
   // --- Model Parameters ---
-  const BASELINE_FLUX_THRESHOLD = 0.998; // Flux below this is considered a dip
+  const BASELINE_FLUX_THRESHOLD = 0.998;
   const MIN_TRANSIT_DURATION_POINTS = 3;
   const MAX_TRANSIT_DURATION_POINTS = 50;
-  const PERIODICITY_TOLERANCE = 0.05; // Tighter tolerance for periodicity
-  const MIN_TRANSITS_FOR_PLANET = 2; // At least 2 transits needed for periodicity check
-  const MIN_BRIGHTNESS_FOR_FLARE = 1.005; // Flux above this is considered a flare
-  const MIN_FLARE_POINTS = 2; // Minimum points for a flare to be valid
-  const V_SHAPE_THRESHOLD = 0.005; // How much V-shaped for eclipsing binary
+  const PERIODICITY_TOLERANCE = 0.05;
+  const MIN_TRANSITS_FOR_PLANET = 2;
+  const MIN_BRIGHTNESS_FOR_FLARE = 1.005;
+  const MIN_FLARE_POINTS = 2;
+  const V_SHAPE_THRESHOLD = 0.005;
 
-  // --- Initial checks and normalization ---
   if (!data || data.length < 10) {
       return { exoplanetDetected: false, confidence: 0.0, transitDepth: 0, period: 0, classification: 'Noise/Other', message: "Not enough data points.", processedData: data, foldedData: [] };
   }
 
-  // Normalize flux to make 1.0 the baseline (for consistency, even if already normalized by sample data)
   const medianFlux = data.map(p => p.flux).sort()[Math.floor(data.length / 2)];
   const normalizedData = data.map(p => ({ ...p, flux: p.flux / medianFlux }));
 
-
-  // --- 1. Identify all dips and flares ---
   const potentialDips: { startTime: number; endTime: number; depth: number; points: number; fluxData: number[]; vShapeMetric?: number }[] = [];
   const potentialFlares: { startTime: number; endTime: number; peak: number; points: number }[] = [];
   let currentEvent: LightCurveData[] = [];
@@ -48,22 +89,21 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
   for (let i = 0; i < normalizedData.length; i++) {
     const point = normalizedData[i];
 
-    if (point.flux < BASELINE_FLUX_THRESHOLD) { // Potential dip
+    if (point.flux < BASELINE_FLUX_THRESHOLD) {
       currentEvent.push(point);
-    } else if (point.flux > MIN_BRIGHTNESS_FOR_FLARE) { // Potential flare
+    } else if (point.flux > MIN_BRIGHTNESS_FOR_FLARE) {
         currentEvent.push(point);
-    } else { // Baseline flux or noise, end of event
+    } else {
       if (currentEvent.length >= MIN_TRANSIT_DURATION_POINTS) {
         const eventFluxes = currentEvent.map(p => p.flux);
         const minFlux = Math.min(...eventFluxes);
         const maxFlux = Math.max(...eventFluxes);
 
-        if (1 - minFlux > maxFlux - 1) { // It's a dip
-            // Calculate V-shape metric: comparison of min flux to start/end flux
+        if (1 - minFlux > maxFlux - 1) {
             const startFlux = eventFluxes[0];
             const endFlux = eventFluxes[eventFluxes.length - 1];
             const avgEdgeFlux = (startFlux + endFlux) / 2;
-            const vShapeMetric = avgEdgeFlux - minFlux; // Higher means more V-shaped
+            const vShapeMetric = avgEdgeFlux - minFlux;
 
             potentialDips.push({
                 startTime: currentEvent[0].time,
@@ -73,7 +113,7 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
                 fluxData: eventFluxes,
                 vShapeMetric: vShapeMetric
             });
-        } else { // It's a flare
+        } else {
              potentialFlares.push({
                 startTime: currentEvent[0].time,
                 endTime: currentEvent[currentEvent.length - 1].time,
@@ -85,12 +125,11 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
       currentEvent = [];
     }
   }
-  // Handle event at end of data
   if (currentEvent.length >= MIN_TRANSIT_DURATION_POINTS) {
       const eventFluxes = currentEvent.map(p => p.flux);
       const minFlux = Math.min(...eventFluxes);
       const maxFlux = Math.max(...eventFluxes);
-      if (1 - minFlux > maxFlux - 1) { // It's a dip
+      if (1 - minFlux > maxFlux - 1) {
            const startFlux = eventFluxes[0];
             const endFlux = eventFluxes[eventFluxes.length - 1];
             const avgEdgeFlux = (startFlux + endFlux) / 2;
@@ -103,7 +142,7 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
               fluxData: eventFluxes,
               vShapeMetric: vShapeMetric
           });
-      } else { // It's a flare
+      } else {
             potentialFlares.push({
                 startTime: currentEvent[0].time,
                 endTime: currentEvent[currentEvent.length - 1].time,
@@ -113,10 +152,6 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
       }
   }
 
-
-  // --- 2. Classify based on dominant features ---
-
-  // Check for Stellar Flare
   const significantFlares = potentialFlares.filter(f => f.peak > 0.005 && f.points >= MIN_FLARE_POINTS);
   if (significantFlares.length >= 1) {
       return {
@@ -126,7 +161,6 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
       };
   }
 
-  // Filter valid dips (not too long)
   const validDips = potentialDips.filter(t => t.points <= MAX_TRANSIT_DURATION_POINTS);
 
   if (validDips.length === 0) {
@@ -137,7 +171,6 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
       };
   }
 
-  // Check for Asteroid Fly-by (single, significant, non-periodic dip)
   if (validDips.length === 1 && validDips[0].depth > 0.005) {
       return {
           exoplanetDetected: false, confidence: 0.95, transitDepth: validDips[0].depth, period: 0,
@@ -146,7 +179,6 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
       };
   }
   
-  // Check for Eclipsing Binary (V-shaped periodic dips)
   const vShapedDips = validDips.filter(d => d.vShapeMetric && d.vShapeMetric > V_SHAPE_THRESHOLD);
   if (vShapedDips.length >= MIN_TRANSITS_FOR_PLANET) {
        const periods: number[] = [];
@@ -156,7 +188,7 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
       const avgPeriod = periods.reduce((a, b) => a + b, 0) / periods.length;
       const consistentPeriods = periods.filter(p => Math.abs(p - avgPeriod) / avgPeriod < PERIODICITY_TOLERANCE);
 
-      if (consistentPeriods.length >= MIN_TRANSITS_FOR_PLANET -1) { // Check for periodicity in V-shaped dips
+      if (consistentPeriods.length >= MIN_TRANSITS_FOR_PLANET -1) {
            return {
                 exoplanetDetected: false, confidence: 0.9, transitDepth: vShapedDips[0].depth, period: parseFloat(avgPeriod.toFixed(2)),
                 classification: 'Eclipsing Binary', message: "Periodic, V-shaped dips detected. Consistent with an eclipsing binary.",
@@ -165,8 +197,6 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
       }
   }
 
-
-  // --- 3. Exoplanet Candidate Check (Periodic, flat-bottomed dips) ---
   if (validDips.length < MIN_TRANSITS_FOR_PLANET) {
        return {
             exoplanetDetected: false, confidence: 0.2, transitDepth: 0, period: 0,
@@ -175,7 +205,6 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
         };
   }
 
-  // Calculate periodicity for potential exoplanets
   const periods: number[] = [];
   for (let i = 1; i < validDips.length; i++) {
     periods.push(validDips[i].startTime - validDips[i - 1].startTime);
@@ -185,12 +214,12 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
   const consistentPeriods = periods.filter(p => Math.abs(p - avgPeriod) / avgPeriod < PERIODICITY_TOLERANCE);
   
   const periodicityScore = consistentPeriods.length / (validDips.length - 1);
-  const transitCountScore = Math.min(validDips.length / 5, 1); // Max score at 5 transits
+  const transitCountScore = Math.min(validDips.length / 5, 1);
 
   let confidence = (periodicityScore * 0.7) + (transitCountScore * 0.3);
-  confidence = parseFloat(Math.min(confidence, 0.99).toFixed(2)); // Cap confidence at 0.99
+  confidence = parseFloat(Math.min(confidence, 0.99).toFixed(2));
 
-  const exoplanetDetected = confidence > 0.65 && consistentPeriods.length >= MIN_TRANSITS_FOR_PLANET -1; // Also require consistent periods
+  const exoplanetDetected = confidence > 0.65 && consistentPeriods.length >= MIN_TRANSITS_FOR_PLANET -1;
 
   const avgTransitDepth = validDips.reduce((acc, t) => acc + t.depth, 0) / validDips.length;
 
@@ -204,7 +233,7 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
       const t0 = validDips[0].startTime;
       for (const point of dataWithTransits) {
           let phase = ((point.time - t0) % avgPeriod) / avgPeriod;
-          if (phase > 0.5) phase -= 1; // Center the transit
+          if (phase > 0.5) phase -= 1;
           foldedData.push({ time: phase * avgPeriod, flux: point.flux });
       }
       foldedData.sort((a, b) => a.time - b.time);
@@ -212,7 +241,7 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
 
   return {
     exoplanetDetected,
-    confidence: exoplanetDetected ? confidence : Math.max(confidence, 0.1), // Ensure confidence is not too low if no planet, but still reflects some signal
+    confidence: exoplanetDetected ? confidence : Math.max(confidence, 0.1),
     transitDepth: parseFloat((avgTransitDepth * 100).toFixed(4)),
     period: parseFloat(avgPeriod.toFixed(2)),
     classification: exoplanetDetected ? 'Exoplanet Candidate' : 'Noise/Other',
@@ -222,7 +251,6 @@ export const runHeuristicModel = (data: LightCurveData[]): HeuristicResult => {
   };
 };
 
-// --- Helper functions --- (Keep these as they are)
 export const parseCSVData = (csvContent: string): LightCurveData[] => {
   const lines = csvContent.split('\n').filter(line => line.trim() !== '');
   const data: LightCurveData[] = [];
@@ -242,25 +270,23 @@ export const parseCSVData = (csvContent: string): LightCurveData[] => {
 export const generateSampleData = (type: 'confirmed-planet' | 'noise' | 'eclipsing-binary' | 'weak-signal' | 'asteroid' | 'stellar-flare' | 'multi-planet'): LightCurveData[] => {
   const data: LightCurveData[] = [];
   const points = 2000;
-  let duration = 30; // Total time duration for the light curve
+  let duration = 30;
 
   for (let i = 0; i < points; i++) {
     const time = (i / points) * duration;
-    let flux = 1.0 + (Math.random() - 0.5) * 0.001; // Reduced base noise for clearer signals
+    let flux = 1.0 + (Math.random() - 0.5) * 0.001;
 
     switch(type) {
       case 'confirmed-planet': {
         const period = 3.2, transitWidth = 0.1, transitDepth = 0.015;
         const timeInPeriod = time % period;
-        // Flat-bottomed transit shape
         if (timeInPeriod < transitWidth / 2 || timeInPeriod > period - transitWidth / 2) {
              flux -= transitDepth;
         } else if (timeInPeriod >= transitWidth / 2 && timeInPeriod <= period - transitWidth / 2 && timeInPeriod <= transitWidth) {
-             // Ingress/Egress slope (simple linear)
-             const ingressEgressDuration = 0.02; // A short time for ingress/egress
+             const ingressEgressDuration = 0.02;
              if (timeInPeriod < ingressEgressDuration) flux -= transitDepth * (timeInPeriod / ingressEgressDuration);
              else if (timeInPeriod > period - ingressEgressDuration) flux -= transitDepth * ((period - timeInPeriod) / ingressEgressDuration);
-             else flux -= transitDepth; // Flat bottom
+             else flux -= transitDepth;
         }
         break;
       }
@@ -270,7 +296,7 @@ export const generateSampleData = (type: 'confirmed-planet' | 'noise' | 'eclipsi
         if (timeInPeriod < transitWidth || timeInPeriod > period - transitWidth) {
           const dipCenter = transitWidth / 2;
           const distanceFromCenter = Math.abs(timeInPeriod - dipCenter);
-          flux -= transitDepth * (1 - (distanceFromCenter / dipCenter)); // V-shape
+          flux -= transitDepth * (1 - (distanceFromCenter / dipCenter));
         }
         break;
       }
@@ -283,23 +309,21 @@ export const generateSampleData = (type: 'confirmed-planet' | 'noise' | 'eclipsi
       case 'asteroid': {
         if (time > 14.9 && time < 15.1) {
           const dipCenter = 15.0, transitWidth = 0.1, distanceFromCenter = Math.abs(time - dipCenter);
-          flux -= 0.01 * (1 - (distanceFromCenter / transitWidth)); // Single V-shape
+          flux -= 0.01 * (1 - (distanceFromCenter / transitWidth));
         }
         break;
       }
       case 'stellar-flare': {
         if ((time > 5 && time < 5.05) || (time > 22 && time < 22.05)) {
-          flux += 0.015; // Increased flare brightness for clearer detection
+          flux += 0.015;
         }
         break;
       }
       case 'multi-planet': {
-        // Planet 1: Short period, shallow transit
         const p1 = { period: 3.8, width: 0.08, depth: 0.005 };
         const timeInPeriod1 = time % p1.period;
         if (timeInPeriod1 < p1.width || timeInPeriod1 > p1.period - p1.width) { flux -= p1.depth; }
 
-        // Planet 2: Longer period, deeper transit
         const p2 = { period: 7.1, width: 0.12, depth: 0.01 };
         const timeInPeriod2 = time % p2.period;
         if (timeInPeriod2 < p2.width || timeInPeriod2 > p2.period - p2.width) { flux -= p2.depth; }
@@ -314,7 +338,6 @@ export const generateSampleData = (type: 'confirmed-planet' | 'noise' | 'eclipsi
   }
   return data;
 };
-
 
 export const readFileContent = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
