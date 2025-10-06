@@ -16,6 +16,7 @@ export default {
 			screens: {
 				'2xl': '1400px'
 			}
+			
 		},
 		extend: {
 			colors: {
